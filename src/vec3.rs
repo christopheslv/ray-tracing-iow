@@ -4,36 +4,37 @@ use std::marker::{Copy};
 
 #[derive(Copy, Clone)]
 pub struct Vec3 {
-    pub e: [f32; 3] 
+    pub e: [f64; 3]  // We could just use x,y,z attributes, kept an array to match book's "API"
 }  
 
+#[allow(dead_code)]
 pub type Point3 = Vec3;
 pub type Color = Vec3;
 
 impl Vec3 {
-    pub fn new(x:f32, y:f32, z:f32) -> Vec3 {
+    pub fn new(x:f64, y:f64, z:f64) -> Vec3 {
         Vec3{
             e : [x,y,z],
         }
     }
 
-    pub fn get_x(&self) -> f32 {
+    pub fn x(&self) -> f64 {
         self.e[0]
     }
 
-    pub fn get_y(&self) -> f32 {
+    pub fn y(&self) -> f64 {
         self.e[1]
     }
 
-    pub fn get_z(&self) -> f32 {
+    pub fn z(&self) -> f64 {
         self.e[2]
     }
 
-    pub fn length(&self) -> f32 {
+    pub fn length(&self) -> f64 {
         return self.length_squared().sqrt();
     }
 
-    pub fn length_squared(&self) -> f32 {
+    pub fn length_squared(&self) -> f64 {
         return self.e[0]*self.e[0] + self.e[1]*self.e[1] + self.e[2]*self.e[2];
     }
  }
@@ -47,16 +48,16 @@ impl AddAssign for Vec3 {
     }
 }
 
-impl MulAssign<f32> for Vec3 {
-    fn mul_assign(&mut self, t: f32) {
+impl MulAssign<f64> for Vec3 {
+    fn mul_assign(&mut self, t: f64) {
         *self = Self {  e: [self.e[0] * t,
                             self.e[1] * t,
                             self.e[2] * t]}
     }
 }
 
-impl DivAssign<f32> for Vec3 {
-    fn div_assign(&mut self, t: f32) {
+impl DivAssign<f64> for Vec3 {
+    fn div_assign(&mut self, t: f64) {
         *self = Self {  e: [self.e[0] / t,
                             self.e[1] / t,
                             self.e[2] / t]}
@@ -74,7 +75,7 @@ impl Neg for Vec3 {
 }
 
 impl Index<usize> for Vec3 {
-    type Output = f32;
+    type Output = f64;
 
     fn index(&self, index: usize) -> &Self::Output {
         &self.e[index]
@@ -88,7 +89,6 @@ impl IndexMut<usize> for Vec3 {
 }
 
 // Utility functions
-
 impl fmt::Display for Vec3{
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "({:.3},{:.3},{:.3})", self.e[0], self.e[1], self.e[2])
@@ -125,10 +125,10 @@ impl Mul for Vec3 {
     }
 }
 
-impl Mul<f32> for Vec3 {
+impl Mul<f64> for Vec3 {
     type Output = Self;
 
-    fn mul(self, t: f32) -> Self {
+    fn mul(self, t: f64) -> Self {
         Self {  e: [self.e[0] * t,
                     self.e[1] * t,
                     self.e[2] * t ]}
@@ -145,10 +145,10 @@ impl Div for Vec3 {
     }
 }
 
-impl Div<f32> for Vec3 {
+impl Div<f64> for Vec3 {
     type Output = Self;
 
-    fn div(self, t: f32) -> Self {
+    fn div(self, t: f64) -> Self {
         Self {  e: [self.e[0] / t,
                     self.e[1] / t,
                     self.e[2] / t ]}
