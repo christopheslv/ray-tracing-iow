@@ -5,6 +5,7 @@ mod color;
 mod ray;
 mod hittable;
 mod sphere;
+mod hittablelist;
 
 use vec3::Point3 as Point3;
 use vec3::Vec3 as Vec3;
@@ -13,13 +14,20 @@ use ray::Ray as Ray;
 use sphere::Sphere as Sphere;
 use hittable::HitRecord as HitRecord;
 use hittable::Hittable;
+use hittablelist::HittableList as HittableList;
 
-fn ray_color(r:Ray, s:Sphere) -> Color {
-    let mut hitrec = HitRecord::default();
+static INFINITY: f64 = f64::MAX;
+static PI: f64 = 3.1415926535897932385;
 
-    let did_hit = s.hit(r, 0.0, 200.0, &mut hitrec);
-    if did_hit {
-        return Color::new(hitrec.normal.x()+1.0, hitrec.normal.y()+1.0, hitrec.normal.z()+1.0) * 0.5;
+fn degrees_to_radians(degrees:f64) -> f64 {
+    degrees * PI / 180.0
+}
+
+fn ray_color(r:Ray, world:&impl Hittable) -> Color {
+    let mut rec = HitRecord::default();
+
+    if world.hit(r, 0.0, INFINITY, &mut rec) {
+        return Color::new(rec.normal.x()+1.0, rec.normal.y()+1.0, rec.normal.z()+1.0) * 0.5;
     }
 
     let unit_direction:Vec3 = vec3::unit_vector(r.direction());
@@ -30,11 +38,13 @@ fn ray_color(r:Ray, s:Sphere) -> Color {
 fn generate_image() {
    // Image
    let aspect_ratio = 16.0 / 9.0;
-   let img_width = 800;
+   let img_width = 400;
    let img_height = (img_width as f64 / aspect_ratio) as u32;
 
    // World
-   let sphere = Sphere::new(Point3::new(0.0,0.0,-1.0), 0.5);
+   let mut world = HittableList::default();
+   world.add(Box::new(Sphere::new(Point3::new(0.0,0.0,-1.0), 0.5)));
+   world.add(Box::new(Sphere::new(Point3::new(0.0,-100.5,-1.0), 100.0)));
    
    // Camera
    let viewport_height = 2.0;
@@ -58,7 +68,7 @@ fn generate_image() {
            let v = j as f64 / (img_height-1) as f64;
 
            let r:Ray = Ray::new(origin, lower_left_corner + horizontal*u + vertical*v - origin);
-           let pixel_color = ray_color(r, sphere);
+           let pixel_color = ray_color(r, &world);
            color::write_color(pixel_color);
        }
    }
