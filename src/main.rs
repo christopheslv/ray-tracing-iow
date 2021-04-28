@@ -3,31 +3,25 @@ use std::io::Write;
 mod vec3;
 mod color;
 mod ray;
+mod hittable;
+mod sphere;
 
 use vec3::Point3 as Point3;
 use vec3::Vec3 as Vec3;
 use vec3::Color as Color;
 use ray::Ray as Ray;
+use sphere::Sphere as Sphere;
+use hittable::HitRecord as HitRecord;
+use hittable::Hittable;
 
-fn hit_sphere(center:Point3, radius:f64, r:Ray) -> f64{
-    let oc = r.origin() - center;
-    let a = vec3::dot(r.direction(), r.direction());
-    let b = vec3::dot(oc, r.direction()) * 2.0;
-    let c = vec3::dot(oc,oc) - radius*radius;
-    let discriminant = b*b - 4.0*a*c;
-    if discriminant < 0.0 {
-        return -1.0;
-    } else {
-        return (-b - discriminant.sqrt() ) / (2.0*a);
-    }
-}
+fn ray_color(r:Ray, s:Sphere) -> Color {
+    let mut hitrec = HitRecord::default();
 
-fn ray_color(r:Ray) -> Color {
-    let t = hit_sphere(Point3::new(0.0,0.0,-1.0), 0.5, r);
-    if t > 0.0 {
-        let normal = vec3::unit_vector(r.at(t) - Vec3::new(0.0, 0.0, -1.0));
-        return Color::new(normal.x()+1.0, normal.y()+1.0, normal.z()+1.0) * 0.5;
+    let did_hit = s.hit(r, 0.0, 200.0, &mut hitrec);
+    if did_hit {
+        return Color::new(hitrec.normal.x()+1.0, hitrec.normal.y()+1.0, hitrec.normal.z()+1.0) * 0.5;
     }
+
     let unit_direction:Vec3 = vec3::unit_vector(r.direction());
     let t:f64 = 0.5*(unit_direction.y() + 1.0);
     Color::new(1.0, 1.0, 1.0)*(1.0-t) + Color::new(0.5, 0.7, 1.0)*t
@@ -36,9 +30,12 @@ fn ray_color(r:Ray) -> Color {
 fn generate_image() {
    // Image
    let aspect_ratio = 16.0 / 9.0;
-   let img_width = 400;
+   let img_width = 800;
    let img_height = (img_width as f64 / aspect_ratio) as u32;
 
+   // World
+   let sphere = Sphere::new(Point3::new(0.0,0.0,-1.0), 0.5);
+   
    // Camera
    let viewport_height = 2.0;
    let viewport_width = aspect_ratio * viewport_height;
@@ -61,7 +58,7 @@ fn generate_image() {
            let v = j as f64 / (img_height-1) as f64;
 
            let r:Ray = Ray::new(origin, lower_left_corner + horizontal*u + vertical*v - origin);
-           let pixel_color = ray_color(r);
+           let pixel_color = ray_color(r, sphere);
            color::write_color(pixel_color);
        }
    }

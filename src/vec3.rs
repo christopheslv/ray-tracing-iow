@@ -28,15 +28,24 @@ impl Vec3 {
     pub fn z(&self) -> f64 {
         self.e[2]
     }
-    #[allow(dead_code)]
+    
     pub fn length(&self) -> f64 {
         return self.length_squared().sqrt();
     }
-    #[allow(dead_code)]
+
     pub fn length_squared(&self) -> f64 {
         return self.e[0]*self.e[0] + self.e[1]*self.e[1] + self.e[2]*self.e[2];
     }
  }
+
+ impl Default for Vec3 {
+    fn default () -> Vec3 {
+        Vec3{
+            e : [0.0,0.0,0.0],
+        }
+    }
+}
+
 
 // Primitive operations
 impl AddAssign for Vec3 {
