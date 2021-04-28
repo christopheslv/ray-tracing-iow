@@ -9,16 +9,25 @@ use vec3::Vec3 as Vec3;
 use vec3::Color as Color;
 use ray::Ray as Ray;
 
-#[allow(dead_code)]
-fn test_vec() {
-    let orig = Point3::new(0.0, 0.0, 0.0);
-    let direction = Point3::new(1.0, 1.0, 0.0);
-    let ray = Ray::new(orig, direction);
-
-    println!("ray at 10 {}", ray.at(10.0));
+fn hit_sphere(center:Point3, radius:f64, r:Ray) -> f64{
+    let oc = r.origin() - center;
+    let a = vec3::dot(r.direction(), r.direction());
+    let b = vec3::dot(oc, r.direction()) * 2.0;
+    let c = vec3::dot(oc,oc) - radius*radius;
+    let discriminant = b*b - 4.0*a*c;
+    if discriminant < 0.0 {
+        return -1.0;
+    } else {
+        return (-b - discriminant.sqrt() ) / (2.0*a);
+    }
 }
 
 fn ray_color(r:Ray) -> Color {
+    let t = hit_sphere(Point3::new(0.0,0.0,-1.0), 0.5, r);
+    if t > 0.0 {
+        let normal = vec3::unit_vector(r.at(t) - Vec3::new(0.0, 0.0, -1.0));
+        return Color::new(normal.x()+1.0, normal.y()+1.0, normal.z()+1.0) * 0.5;
+    }
     let unit_direction:Vec3 = vec3::unit_vector(r.direction());
     let t:f64 = 0.5*(unit_direction.y() + 1.0);
     Color::new(1.0, 1.0, 1.0)*(1.0-t) + Color::new(0.5, 0.7, 1.0)*t

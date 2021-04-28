@@ -14,7 +14,7 @@ impl Ray {
             dir : direction,
         }
     }
-    #[allow(dead_code)]
+    
     pub fn origin(&self) -> Point3 {
         self.orig
     }
@@ -22,7 +22,7 @@ impl Ray {
     pub fn direction(&self) -> Vec3 {
         self.dir
     }
-
+    #[allow(dead_code)]
     pub fn at(&self, t:f64) -> Point3 {
         return self.orig + self.dir * t
     }
