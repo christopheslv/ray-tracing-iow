@@ -29,11 +29,11 @@ impl Vec3 {
     pub fn z(&self) -> f64 {
         self.e[2]
     }
-
+    #[allow(dead_code)]
     pub fn length(&self) -> f64 {
         return self.length_squared().sqrt();
     }
-
+    #[allow(dead_code)]
     pub fn length_squared(&self) -> f64 {
         return self.e[0]*self.e[0] + self.e[1]*self.e[1] + self.e[2]*self.e[2];
     }
@@ -154,7 +154,7 @@ impl Div<f64> for Vec3 {
                     self.e[2] / t ]}
     }
 }
-
+#[allow(dead_code)]
 pub fn dot(u:Vec3, v:Vec3) -> Vec3 {
     Vec3 {  e: [u.e[0] * v.e[0],
                 u.e[1] * v.e[1],
@@ -168,7 +168,7 @@ pub fn cross(u:Vec3, v:Vec3) -> Vec3 {
                 u.e[0] * v.e[1] - u.e[1] * v.e[0]]
     }
 }
-
+#[allow(dead_code)]
 pub fn unit_vector(v:Vec3) -> Vec3 {
     v / v.length()
 }
