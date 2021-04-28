@@ -14,7 +14,7 @@ impl Ray {
             dir : direction,
         }
     }
-
+    #[allow(dead_code)]
     pub fn origin(&self) -> Point3 {
         self.orig
     }
