@@ -20,11 +20,17 @@ use hittable::HitRecord as HitRecord;
 use hittable::Hittable;
 use hittablelist::HittableList as HittableList;
 
-fn ray_color(r:Ray, world:&impl Hittable) -> Color {
+fn ray_color(r:Ray, world:&impl Hittable, depth:u32) -> Color {
     let mut rec = HitRecord::default();
 
-    if world.hit(r, 0.0, utils::INFINITY, &mut rec) {
-        return Color::new(rec.normal.x()+1.0, rec.normal.y()+1.0, rec.normal.z()+1.0) * 0.5;
+     // If we've exceeded the ray bounce limit, no more light is gathered.
+    if depth <= 0 {
+        return Color::default();
+    }
+     
+    if world.hit(r, 0.001, utils::INFINITY, &mut rec) {
+        let target = rec.p + Vec3::random_in_hemisphere(rec.normal);
+        return ray_color( Ray::new(rec.p, target-rec.p), world, depth-1) * 0.5;
     }
 
     let unit_direction:Vec3 = vec3::unit_vector(r.direction());
@@ -37,7 +43,8 @@ fn generate_image() {
    let aspect_ratio = 16.0 / 9.0;
    let img_width = 400;
    let img_height = (img_width as f64 / aspect_ratio) as u32;
-   let sampels_per_pixel = 100;
+   let samples_per_pixel = 20;
+   let max_depth = 50;
 
    // World
    let mut world = HittableList::default();
@@ -56,14 +63,14 @@ fn generate_image() {
        for i in 0..img_width {
            let mut pixel_color = Color::default();
 
-            for _s in 0..sampels_per_pixel {
+            for _s in 0..samples_per_pixel {
                 let u = (i as f64 + utils::random_one()) / (img_width-1) as f64;
                 let v = (j as f64 + utils::random_one()) / (img_height-1) as f64;
                 let r = camera.get_ray(u,v);
 
-                pixel_color = pixel_color + ray_color(r, &world);
+                pixel_color = pixel_color + ray_color(r, &world, max_depth);
             } 
-           color::write_color(pixel_color, sampels_per_pixel);
+           color::write_color(pixel_color, samples_per_pixel);
        }
    }
 

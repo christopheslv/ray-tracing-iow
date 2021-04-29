@@ -1,6 +1,7 @@
 use std::fmt;
 use std::ops::{Add, Sub, Mul, Div, AddAssign, MulAssign, DivAssign, Neg, Index, IndexMut};
 use std::marker::{Copy};
+use super::utils;
 
 #[derive(Copy, Clone)]
 pub struct Vec3 {
@@ -35,6 +36,50 @@ impl Vec3 {
 
     pub fn length_squared(&self) -> f64 {
         return self.e[0]*self.e[0] + self.e[1]*self.e[1] + self.e[2]*self.e[2];
+    }
+    #[allow(dead_code)]
+    pub fn random_unit() -> Vec3 {
+        let x = utils::random_one();
+        let y = utils::random_one();
+        let z = utils::random_one();
+
+        Vec3{
+            e : [x,y,z],
+        }
+    }
+
+    pub fn random(min:f64, max:f64) -> Vec3 {
+        let x = utils::random_float(min,max);
+        let y = utils::random_float(min,max);
+        let z = utils::random_float(min,max);
+
+        Vec3{
+            e : [x,y,z],
+        }
+    }
+
+    pub fn random_in_unit_sphere() -> Vec3 {
+        loop {
+            let p = Vec3::random(-1.0, 1.0);
+            if p.length_squared() >= 1.0 {
+                continue;
+            }else {
+                return p;
+            }
+        }
+    }
+
+    pub fn random_unit_vector() -> Vec3 {
+        unit_vector(Vec3::random_in_unit_sphere())
+    }
+
+    pub fn random_in_hemisphere(normal:Vec3) -> Vec3 {
+        let in_unit_sphere = Vec3::random_in_unit_sphere();
+        if dot(in_unit_sphere, normal) > 0.0 { // In the same hemisphere as the normal
+            return in_unit_sphere;
+        }else {
+            return -in_unit_sphere;
+        }
     }
  }
 
