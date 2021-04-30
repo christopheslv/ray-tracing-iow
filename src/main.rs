@@ -49,11 +49,12 @@ fn ray_color(r:Ray, world:&mut HittableList, depth:u32) -> Color {
 }
 
 fn main() {
+
     // Image
     let aspect_ratio = 16.0 / 9.0;
-    let img_width = 400;
+    let img_width = 800;
     let img_height = (img_width as f64 / aspect_ratio) as u32;
-    let samples_per_pixel = 20;
+    let samples_per_pixel = 50;
     let max_depth = 50;
 
     // World
@@ -70,12 +71,13 @@ fn main() {
     world.add(Box::new( Sphere::new(Point3::new(-1.0,    0.0, -1.0),  -0.45, material_left.clone()) ));
     world.add(Box::new( Sphere::new(Point3::new( 1.0,    0.0, -1.0),   0.5, material_right.clone()) ));
    
-
     // Camera
-    let lookat = Point3::new(-2.0, 2.0, 1.0);
-    let lookup = Point3::new( 0.0, 0.0, -1.0);
+    let lookfrom = Point3::new(3.0, 3.0, 2.0);
+    let lookat = Point3::new( 0.0, 0.0, -1.0);
     let vfov = Vec3::new( 0.0, 1.0, 0.0);
-    let camera = Camera::new(lookat, lookup, vfov, 20.0, aspect_ratio);
+    let dist_to_focus =  (lookfrom-lookat).length();
+    let aperture = 2.0;
+    let camera = Camera::new(lookfrom, lookat, vfov, 20.0, aspect_ratio, aperture, dist_to_focus);
 
     // Render
     writeln!(io::stdout(),"P3\n{} {}\n255", img_width, img_height).unwrap(); 
