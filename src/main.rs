@@ -19,8 +19,6 @@ use ray::Ray as Ray;
 use camera::Camera as Camera;
 use sphere::Sphere as Sphere;
 use hittable::Hittable;
-use material::Material;
-
 use hittablelist::HittableList as HittableList;
 
 fn ray_color(r:Ray, world:&mut HittableList, depth:u32) -> Color {
@@ -59,12 +57,17 @@ fn main() {
     let max_depth = 50;
 
     // World
-    let mat = material::Lambertian::new(Color::new(0.5, 0.5, 0.5));
-    let ra:Rc<dyn Material> = Rc::new(mat);
+    let material_ground = Rc::new(material::Lambertian::new(Color::new(0.8, 0.8, 0.0)));
+    let material_center = Rc::new(material::Lambertian::new(Color::new(0.7, 0.3, 0.3)));
+    let material_left = Rc::new(material::Metal::new(Color::new(0.8, 0.8, 0.8), 0.3));
+    let material_right = Rc::new(material::Metal::new(Color::new(0.8, 0.6, 0.2), 1.0));
 
     let mut world = HittableList::new();
-    world.add(Box::new( Sphere::new(Point3::new(0.0,0.0,-1.0), 0.5, Rc::clone(&ra) ) ));
-    world.add(Box::new( Sphere::new(Point3::new(0.0,-100.5,-1.0), 100.0, Rc::clone(&ra) ) ));
+    world.add(Box::new( Sphere::new(Point3::new( 0.0, -100.5, -1.0), 100.0, material_ground) ));
+    world.add(Box::new( Sphere::new(Point3::new( 0.0,    0.0, -1.0),   0.5, material_center) ));
+    world.add(Box::new( Sphere::new(Point3::new(-1.0,    0.0, -1.0),   0.5, material_left) ));
+    world.add(Box::new( Sphere::new(Point3::new( 1.0,    0.0, -1.0),   0.5, material_right) ));
+    
    
     // Camera
     let camera = Camera::new();
