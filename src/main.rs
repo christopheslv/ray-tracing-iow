@@ -48,35 +48,75 @@ fn ray_color(r:Ray, world:&mut HittableList, depth:u32) -> Color {
     Color::new(1.0, 1.0, 1.0)*(1.0-t) + Color::new(0.5, 0.7, 1.0)*t
 }
 
+fn randrom_scene() -> HittableList {
+    let mut world = HittableList::new();
+
+    let ground_material = Rc::new(material::Lambertian::new(Color::new( 0.5, 0.5, 0.5)));
+    world.add(Box::new( Sphere::new(Point3::new( 0.0, -1000.0, 0.0), 1000.0, ground_material.clone()) ));
+
+    for a in -11..11 {
+        for b in -11..11 {
+            let choose_mat = utils::random_one();
+            let center = Point3::new(   a as f64 + 0.9*utils::random_one(),
+                                        0.2,
+                                        b as f64 + 0.9*utils::random_one());
+
+            if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
+                let sphere_material:Rc<dyn material::Material>;
+
+                if choose_mat < 0.8 {
+                    // diffuse
+                    let albedo = Color::random_unit() * Color::random_unit();
+                    sphere_material = Rc::new(material::Lambertian::new(albedo));
+                    world.add(Box::new( Sphere::new(center, 0.2, sphere_material.clone()) ));
+                } else if choose_mat < 0.95 {
+                    // metal
+                    let albedo = Color::random(0.5, 1.0);
+                    let fuzz = utils::random_float(0.0, 0.5);
+                    sphere_material = Rc::new(material::Metal::new(albedo, fuzz));
+                    world.add(Box::new( Sphere::new(center, 0.2, sphere_material.clone()) ));
+
+                } else {
+                    // glass
+                    sphere_material = Rc::new(material::Dielectric::new(1.5));
+                    world.add(Box::new( Sphere::new(center, 0.2, sphere_material.clone()) ));
+                }
+            }                           
+
+        }
+    }
+
+    let material1 = Rc::new(material::Dielectric::new(1.5));
+    world.add(Box::new( Sphere::new(Point3::new( 0.0, 1.0, 0.0), 1.0, material1.clone()) ));
+
+    let material2 = Rc::new(material::Lambertian::new(Color::new( 0.4, 0.2, 0.1)));
+    world.add(Box::new( Sphere::new(Point3::new( -4.0, 1.0, 0.0), 1.0, material2.clone()) ));
+
+    let material3 = Rc::new(material::Metal::new(Color::new( 0.7, 0.6, 0.5), 0.0));
+    world.add(Box::new( Sphere::new(Point3::new( 4.0, 1.0, 0.0), 1.0, material3.clone()) ));
+
+    world
+}
+
 fn main() {
 
     // Image
-    let aspect_ratio = 16.0 / 9.0;
+    let aspect_ratio = 3.0 / 2.0;
     let img_width = 800;
     let img_height = (img_width as f64 / aspect_ratio) as u32;
-    let samples_per_pixel = 50;
+    let samples_per_pixel = 250;
     let max_depth = 50;
 
     // World
-    let mut world = HittableList::new();
+    let mut world = randrom_scene();
   
-    let material_ground = Rc::new(material::Lambertian::new(Color::new( 0.8, 0.8, 0.0)));
-    let material_center = Rc::new(material::Lambertian::new(Color::new( 0.1, 0.2, 0.5)));
-    let material_left = Rc::new(material::Dielectric::new(1.5));
-    let material_right = Rc::new(material::Metal::new(Color::new( 0.8, 0.6, 0.2), 0.0));
-    
-    world.add(Box::new( Sphere::new(Point3::new( 0.0, -100.5, -1.0), 100.0, material_ground.clone()) ));
-    world.add(Box::new( Sphere::new(Point3::new( 0.0,    0.0, -1.0),   0.5, material_center.clone()) ));
-    world.add(Box::new( Sphere::new(Point3::new(-1.0,    0.0, -1.0),   0.5, material_left.clone()) ));
-    world.add(Box::new( Sphere::new(Point3::new(-1.0,    0.0, -1.0),  -0.45, material_left.clone()) ));
-    world.add(Box::new( Sphere::new(Point3::new( 1.0,    0.0, -1.0),   0.5, material_right.clone()) ));
-   
+
     // Camera
-    let lookfrom = Point3::new(3.0, 3.0, 2.0);
-    let lookat = Point3::new( 0.0, 0.0, -1.0);
+    let lookfrom = Point3::new(13.0, 2.0, 3.0);
+    let lookat = Point3::new( 0.0, 0.0, 0.0);
     let vfov = Vec3::new( 0.0, 1.0, 0.0);
-    let dist_to_focus =  (lookfrom-lookat).length();
-    let aperture = 2.0;
+    let dist_to_focus =  10.0;
+    let aperture = 0.1;
     let camera = Camera::new(lookfrom, lookat, vfov, 20.0, aspect_ratio, aperture, dist_to_focus);
 
     // Render
