@@ -27,3 +27,12 @@ impl Ray {
         return self.orig + self.dir * t
     }
 }
+
+impl Default for Ray {
+    fn default () -> Ray {
+        Ray{
+            orig : Point3::new(0.0,0.0,0.0),
+            dir: Vec3::new(0.0,0.0,0.0),
+        }
+    }
+}
