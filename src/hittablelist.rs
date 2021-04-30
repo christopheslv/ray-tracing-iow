@@ -7,7 +7,7 @@ use super::material::Material as Material;
 
 pub struct HittableList {
     pub objects: Vec<Box<dyn Hittable>>,
-    nomat: Rc<dyn Material>,
+    pub nomat: Rc<dyn Material>,
 }  
 
 impl HittableList {

@@ -55,7 +55,7 @@ fn main() {
     let aspect_ratio = 16.0 / 9.0;
     let img_width = 400;
     let img_height = (img_width as f64 / aspect_ratio) as u32;
-    let samples_per_pixel = 50;
+    let samples_per_pixel = 20;
     let max_depth = 50;
 
     // World
@@ -63,8 +63,8 @@ fn main() {
     let ra:Rc<dyn Material> = Rc::new(mat);
 
     let mut world = HittableList::new();
-    world.add(Box::new( Sphere::new(Point3::new(0.0,0.0,-1.0), 0.5, ra.clone() ) ));
-    world.add(Box::new( Sphere::new(Point3::new(0.0,-100.5,-1.0), 100.0, ra.clone() ) ));
+    world.add(Box::new( Sphere::new(Point3::new(0.0,0.0,-1.0), 0.5, Rc::clone(&ra) ) ));
+    world.add(Box::new( Sphere::new(Point3::new(0.0,-100.5,-1.0), 100.0, Rc::clone(&ra) ) ));
    
     // Camera
     let camera = Camera::new();
@@ -73,7 +73,7 @@ fn main() {
     writeln!(io::stdout(),"P3\n{} {}\n255", img_width, img_height).unwrap(); 
 
     for j in (0..=(img_height-1)).rev() {
-        write!(io::stderr(),  "\rScanlines remaining: {} ", j).unwrap(); 
+        write!(io::stderr(),  "\rScanlines remaining: {}", j).unwrap(); 
 
         for i in 0..img_width {
             let mut pixel_color = Color::default();
