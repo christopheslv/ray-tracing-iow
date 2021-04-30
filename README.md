@@ -6,8 +6,8 @@ Yet another implementation of Peter Shirley's [_Ray Tracing in One Weekend_](htt
 
 ### Status ###
 
-A very good way to try out and learn a new programming language, however this might not be the best Rust code around.
-This is a straight out 1-1 of the book's structures and methods architecture, there is certainly plenty of room for optimizations and taking advantage of Rust's specificities.
+A very good way to try and learn a new programming language, Rust, however this might not be the best code around.
+This is the straight out 1-1 structure and naming choices from the book, there is certainly plenty of room for optimizations by taking advantage of Rust's specificities.
 
 Next steps might be about implementing the following books, with some re-interpretation of the design decisions, and/or some use case specialization.
 
@@ -27,7 +27,7 @@ cargo build --release
 open image.ppm
 ```
 
-For higher quality renderings and longer computation, try changing the img_width to 800 and samples_per_pixel to 250 in main.rs.
+For higher quality renderings, and longer computation time, try changing the img_width to 800 and samples_per_pixel to 250 in main.rs.
 
 ### References ###
 
