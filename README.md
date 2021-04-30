@@ -1,5 +1,38 @@
 # Ray Tracing In One Weekend
 
-Yet another [Rust](https://www.rust-lang.org) implementation of Peter Shirley's [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html) book.
+![final rendering](https://github.com/christopheslv/ray-tracing-iow/blob/main/assets/13_final_rendering.jpg?raw=true)
 
-Implementing this book tutorial was a very good way to learn a new language, Rust, so this is not the best code around.
+Yet another implementation of Peter Shirley's [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html) book, in [Rust](https://www.rust-lang.org).
+
+### Status ###
+
+A very good way to try out and learn a new programming language, however this might not be the best Rust code around.
+This is a straight out 1-1 of the book's structures and methods architecture, there is certainly plenty of room for optimizations and taking advantage of Rust's specificities.
+
+Next steps might be about implementing the following books, with some re-interpretation of the design decisions, and/or some use case specialization.
+
+### Run ###
+
+```sh
+# Move to project base directory
+cd ray-tracing-iow
+
+# Build Release 
+cargo build --release
+
+# Generate ppm image in current folder
+./target/release/ray-tracing-iow > image.ppm
+
+# Preview the image (MacOS only)
+open image.ppm
+```
+
+For higher quality renderings and longer computation, try changing the img_width to 800 and samples_per_pixel to 250 in main.rs.
+
+### References ###
+
+Peter Shirley's [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
+
+### Code License ###
+
+MIT, see [LICENSE.md](http://github.com/christopheslv//ray-tracing-iow/blob/main/LICENSE.md) for details.
